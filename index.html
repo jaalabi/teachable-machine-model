@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teachable Machine Model</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+  <script src="./model.json"></script>
+</head>
+<body>
+  <h1>Teachable Machine Model Viewer</h1>
+  <p>Your model is hosted and ready!</p>
+  <script>
+    // Example script to load the model
+    async function loadModel() {
+      const model = await tf.loadGraphModel('./model.json');
+      console.log("Model loaded", model);
+    }
+    loadModel();
+  </script>
+</body>
+</html>
