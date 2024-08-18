@@ -5,18 +5,46 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Teachable Machine Model</title>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-  <script src="./model.json"></script>
 </head>
 <body>
   <h1>Teachable Machine Model Viewer</h1>
   <p>Your model is hosted and ready!</p>
+  
+  <input type="file" id="uploadImage" accept="image/*">
+  <div>
+    <img id="previewImage" width="200px" />
+    <p id="prediction"></p>
+  </div>
+
   <script>
-    // Example script to load the model
+    let model;
+    
+    // Load the Teachable Machine model
     async function loadModel() {
-      const model = await tf.loadGraphModel('./model.json');
+      model = await tf.loadGraphModel('./model.json');
       console.log("Model loaded", model);
     }
+    
     loadModel();
+    
+    // Handle image upload
+    document.getElementById('uploadImage').onchange = function(event) {
+      const image = document.getElementById('previewImage');
+      const file = event.target.files[0];
+      image.src = URL.createObjectURL(file);
+      
+      image.onload = async function() {
+        // Resize the image to match model input requirements
+        const tensor = tf.browser.fromPixels(image).resizeNearestNeighbor([224, 224]).expandDims().toFloat().div(255);
+        
+        // Get predictions from the model
+        const predictions = await model.predict(tensor).data();
+        
+        // Display the prediction result
+        const predictionElement = document.getElementById('prediction');
+        predictionElement.innerText = `Prediction: ${predictions}`;
+      };
+    };
   </script>
 </body>
 </html>
